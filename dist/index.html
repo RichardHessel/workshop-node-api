@@ -1,0 +1,75 @@
+<h1>Usuários</h1>
+
+<label>Nome</label>
+<input type="text" id="nome" />
+<label>Email</label>
+<input type="text" id="email" />
+<label>idade</label>
+<input type="number" id="idade" />
+<label>senha</label>
+<input type="password" id="senha" />
+<input type="button" value="salvar" id="btnSalvar">
+<br />
+<div id="dados"></div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/api/usuario',
+            method: 'GET',
+            success: function (res) {
+                var dados = "";
+                for (var i = 0; i < res.length; i++) {
+                    dados += res[i].nome + ' | ' + res[i].idade + ' | ' + res[i].email + '<br />';
+                }
+                $('#dados').html(dados);
+            },
+            error: function (err, xhr) {
+                console.error('ocorreu um erro =>', err);
+            }
+        })
+    });
+    $('#btnSalvar').click(function (e) {
+        e.preventDefault();
+        var obj = {
+            nome: $('#nome').val(),
+            idade: $('#idade').val(),
+            email: $('#email').val(),
+            senha: $('#senha').val()
+        };
+        $.ajax({
+            url: '/api/usuario',
+            method: 'POST',
+            dataType: 'json',
+            data: obj,
+            success: function () {
+                alert('sucesso');
+
+                $.ajax({
+                    url: '/api/usuario',
+                    method: 'GET',
+                    success: function (res) {
+                        var dados = "";
+                        for (var i = 0; i < res.length; i++) {
+                            dados += res[i].nome + ' | ' + res[i].idade + ' | ' + res[i].email + '<br />';
+                        }
+                        $('#dados').html(dados);
+                    },
+                    error: function (err, xhr) {
+                        console.error('ocorreu um erro =>', err);
+                    }
+                })
+
+
+            },
+            error: function (err) {
+                console.log('err', err);
+            }
+        });
+
+
+    });
+
+</script>
